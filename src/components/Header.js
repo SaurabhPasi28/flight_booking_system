@@ -1,10 +1,12 @@
 'use client';
 
+import { useApp } from '@/context/AppContext';
 import { FaMoon, FaSun, FaWallet, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import Link from 'next/link';
 
 export default function Header() {
-
+  const { walletBalance, darkMode, toggleDarkMode, user, logout } = useApp();
+  console.log(darkMode ,'------------->')
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50 transition-colors">
@@ -15,7 +17,7 @@ export default function Header() {
           </Link>
 
           <nav className="flex items-center gap-4">
-            {(
+            {user ? (
               <>
                 <Link 
                   href="/" 
@@ -33,19 +35,19 @@ export default function Header() {
                 <div className="flex items-center gap-2 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 px-4 py-2 rounded-lg shadow-sm">
                   <FaWallet className="text-green-600 dark:text-green-400" />
                   <span className="font-bold text-green-700 dark:text-green-300">
-                    50000
+                    ₹{walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
                   <FaUser className="text-gray-600 dark:text-gray-400" />
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Name
+                    {user.fullName}
                   </span>
                 </div>
 
                 <button
-                  // onClick={logout}
+                  onClick={logout}
                   className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 transition"
                   title="Logout"
                 >
@@ -68,6 +70,14 @@ export default function Header() {
                 </Link>
               </>
             )}
+
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+              aria-label="Toggle dark mode"
+            >
+              {darkMode ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-gray-700" />}
+            </button>
           </nav>
         </div>
       </div>

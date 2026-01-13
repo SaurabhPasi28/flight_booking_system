@@ -3,12 +3,19 @@
 import { useState, useEffect } from 'react';
 import { FaSearch, FaPlane, FaSort, FaFilter } from 'react-icons/fa';
 
-export default function SearchFlights({airlines = [] }) {
+export default function SearchFlights({ onSearch }) {
   const [departure, setDeparture] = useState('');
   const [arrival, setArrival] = useState('');
-  const [sortBy, setSortBy] = useState('price-low');
+  const [sortBy, setSortBy] = useState('price-high');
   const [airline, setAirline] = useState('');
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSearch({ departure, arrival, sortBy, airline });
+  };
+
+
+  // console.log(sortBy,"sorting check__>")
 
   const cities = [
     'Mumbai',
@@ -18,6 +25,12 @@ export default function SearchFlights({airlines = [] }) {
     'Kolkata',
     'Hyderabad',
   ];
+  const airlines = [
+    "Air India",
+    "IndiGo",
+    "Vistara",
+    "SpiceJet"
+  ]
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-8 transition-colors border border-gray-200 dark:border-gray-700">
