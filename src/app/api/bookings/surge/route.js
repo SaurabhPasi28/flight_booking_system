@@ -1,11 +1,19 @@
 import { query } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { getUserFromRequest } from '@/lib/auth';
 
 export async function GET(request) {
   try {
+    const user = await getUserFromRequest(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const flightId = searchParams.get('flightId');
-    const sessionId = searchParams.get('sessionId');
 
     if (!flightId) {
       return NextResponse.json(
@@ -14,15 +22,17 @@ export async function GET(request) {
       );
     }
 
-    // Get booking attempts for this flight in the last 5 minutes
+    // Get booking attempts for THIS USER on this flight in the last 5 minutes
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
     
     const attemptsResult = await query(
-      'SELECT COUNT(*) as count FROM booking_attempts WHERE flight_id = $1 AND attempt_time > $2',
-      [flightId, fiveMinutesAgo]
+      'SELECT COUNT(*) as count FROM booking_attempts WHERE flight_id = $1 AND user_id = $2 AND attempt_time > $3',
+      [flightId, user.id, fiveMinutesAgo]
     );
 
     const attemptCount = parseInt(attemptsResult.rows[0].count);
+
+    console.log(`📊 Surge check: User ${user.id}, Flight ${flightId}, Attempts: ${attemptCount}`);
 
     // Get base price
     const priceResult = await query(
@@ -42,6 +52,8 @@ export async function GET(request) {
     // Apply surge pricing: 10% increase for every 3 attempts
     const surgeMultiplier = Math.floor(attemptCount / 3) * 0.1;
     const finalPrice = basePrice * (1 + surgeMultiplier);
+
+    console.log(`💰 Surge calculation: Base ₹${basePrice}, Multiplier ${surgeMultiplier}, Final ₹${finalPrice}`);
 
     // Calculate time until reset (10 minutes from oldest attempt in window)
     let resetTime = null;

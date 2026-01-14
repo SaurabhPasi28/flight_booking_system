@@ -1,3 +1,4 @@
+-- Create the database (run this first manually in PostgreSQL)
 -- CREATE DATABASE flight_booking;
 
 -- Connect to the database and create tables
@@ -21,10 +22,19 @@ CREATE TABLE IF NOT EXISTS bookings (
   pnr VARCHAR(20) UNIQUE NOT NULL,
   flight_id VARCHAR(10) NOT NULL REFERENCES flights(flight_id),
   passenger_name VARCHAR(100) NOT NULL,
+  passenger_age INTEGER NOT NULL,
+  passenger_gender VARCHAR(10) NOT NULL,
+  passenger_type VARCHAR(10) NOT NULL DEFAULT 'adult',
+  document_number VARCHAR(50),
+  phone_number VARCHAR(20) NOT NULL,
+  class_type VARCHAR(20) NOT NULL DEFAULT 'economy',
   final_price DECIMAL(10, 2) NOT NULL,
+  flight_date DATE NOT NULL,
   booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  booking_status VARCHAR(20) NOT NULL DEFAULT 'upcoming',
   user_id INTEGER,
-  FOREIGN KEY (flight_id) REFERENCES flights(flight_id)
+  FOREIGN KEY (flight_id) REFERENCES flights(flight_id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 -- Users Table (for authentication)
@@ -66,10 +76,11 @@ BEGIN
   ON CONFLICT (user_id) DO NOTHING;
 END $$;
 
--- Booking Attempts Table (for tracking surge pricing)
+-- Booking Attempts Table (for tracking surge pricing per user)
 CREATE TABLE IF NOT EXISTS booking_attempts (
   id SERIAL PRIMARY KEY,
   flight_id VARCHAR(10) NOT NULL REFERENCES flights(flight_id),
+  user_id INTEGER REFERENCES users(id),
   attempt_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   session_id VARCHAR(100) NOT NULL
 );
@@ -79,6 +90,7 @@ CREATE INDEX IF NOT EXISTS idx_flights_departure ON flights(departure_city);
 CREATE INDEX IF NOT EXISTS idx_flights_arrival ON flights(arrival_city);
 CREATE INDEX IF NOT EXISTS idx_flights_price ON flights(base_price);
 CREATE INDEX IF NOT EXISTS idx_booking_attempts_flight ON booking_attempts(flight_id);
+CREATE INDEX IF NOT EXISTS idx_booking_attempts_user ON booking_attempts(user_id);
 CREATE INDEX IF NOT EXISTS idx_booking_attempts_time ON booking_attempts(attempt_time);
 CREATE INDEX IF NOT EXISTS idx_bookings_user ON bookings(user_id);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);

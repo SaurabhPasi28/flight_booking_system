@@ -1,6 +1,7 @@
 import { query } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
+import { convertServerPatchToFullTree } from 'next/dist/client/components/segment-cache/navigation';
 
 // Helper function to generate PNR
 function generatePNR() {
@@ -14,6 +15,7 @@ function generatePNR() {
 
 // Calculate surge pricing
 async function calculateSurgePrice(flightId, sessionId) {
+  console.log("trying to book--------->")
   try {
     // Get booking attempts for this flight in the last 5 minutes
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
@@ -80,11 +82,7 @@ export async function POST(request) {
       );
     }
 
-    // Record booking attempt
-    await query(
-      'INSERT INTO booking_attempts (flight_id, session_id) VALUES ($1, $2)',
-      [flightId, sessionId]
-    );
+    // No need to record attempt here - already recorded when user visited the page
 
     // Calculate price with surge (for verification)
     const pricing = await calculateSurgePrice(flightId, sessionId);

@@ -24,6 +24,11 @@ async function setupDatabase() {
     await pool.query(seedSQL);
     console.log('✅ Data seeded successfully');
 
+    // Read and execute migration
+    const migrationSQL = fs.readFileSync(path.join(__dirname, 'migration.sql'), 'utf8');
+    await pool.query(migrationSQL);
+    console.log('✅ Migration completed successfully');
+
     console.log('🎉 Database setup complete!');
   } catch (error) {
     console.error('❌ Error setting up database:', error.message);

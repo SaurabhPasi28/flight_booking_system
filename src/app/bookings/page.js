@@ -120,27 +120,40 @@ export default function BookingsPage() {
       <Header />
       
       <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-6">
             <FaTicketAlt className="text-3xl text-blue-600 dark:text-blue-400" />
             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">
               My Bookings
             </h1>
           </div>
           
-          {/* Status Filter */}
-          <div className="flex items-center gap-3">
-            <FaFilter className="text-gray-600 dark:text-gray-400" />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none transition"
-            >
-              <option value="all">All Bookings</option>
-              <option value="upcoming">Upcoming</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
+          {/* Horizontal Tab Filter */}
+          <div className="flex gap-2 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 inline-flex">
+            {[
+              { value: 'all', label: 'All Bookings', icon: FaTicketAlt },
+              { value: 'upcoming', label: 'Upcoming', icon: FaClock },
+              { value: 'completed', label: 'Completed', icon: FaCheckCircle },
+              { value: 'cancelled', label: 'Cancelled', icon: FaTimesCircle }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.value}
+                  onClick={() => setStatusFilter(tab.value)}
+                  className={`
+                    flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all
+                    ${statusFilter === tab.value
+                      ? 'bg-blue-600 text-white shadow-lg transform scale-105'
+                      : 'bg-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }
+                  `}
+                >
+                  <Icon className="text-sm" />
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 

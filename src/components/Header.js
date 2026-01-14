@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function Header() {
   const { walletBalance, darkMode, toggleDarkMode, user, logout } = useApp();
-  console.log(darkMode ,'------------->')
+  // console.log(darkMode ,'------------->')
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50 transition-colors">

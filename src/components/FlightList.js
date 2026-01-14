@@ -21,15 +21,17 @@ export default function FlightList({ flights, loading }) {
       try {
         const response = await fetch(`/api/bookings/surge?flightId=${flight.flight_id}`);
         const data = await response.json();
+        console.log("surge function",data);
         if (data.success) {
           prices[flight.flight_id] = data;
+          setSurgePrices(prices);
         }
       } catch (error) {
         console.error('Error fetching surge price:', error);
       }
     }
-    setSurgePrices(prices);
   };
+  console.log(flights);
 
   const formatTime = (timeString) => {
     if (!timeString) return 'N/A';
@@ -146,7 +148,7 @@ export default function FlightList({ flights, loading }) {
                     </p>
                   </div>
                   <button
-                    onClick={() => router.push(`/book?flightId=${flight.flight_id}`)}
+                    onClick={() => window.location.href = `/book?flightId=${flight.flight_id}`}
                     className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-500 dark:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-700 text-white rounded-lg font-bold transition shadow-lg hover:shadow-xl"
                   >
                     Book Now
