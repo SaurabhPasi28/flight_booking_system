@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useApp } from '@/context/AppContext';
 import Link from 'next/link';
 import { FaEnvelope, FaLock, FaUser, FaPlane } from 'react-icons/fa';
 
 export default function RegisterPage() {
-  // const { register: registerUser, loading: authLoading } = useApp();
+  const { register: registerUser, loading: authLoading } = useApp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');

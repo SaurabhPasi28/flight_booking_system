@@ -66,7 +66,17 @@ export default function BookNowPage() {
     }
   };
 
-
+  const fetchSurgePrice = async (flightId) => {
+    try {
+      const response = await fetch(`/api/bookings/surge?flightId=${flightId}`);
+      const data = await response.json();
+      if (data.success) {
+        setSurgeData(data);
+      }
+    } catch (error) {
+      console.error('Error fetching surge price:', error);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -77,7 +87,30 @@ export default function BookNowPage() {
     }
   };
 
-
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.passengerName.trim()) newErrors.passengerName = 'Name is required';
+    if (!formData.passengerAge || formData.passengerAge < 1 || formData.passengerAge > 120) {
+      newErrors.passengerAge = 'Valid age is required (1-120)';
+    }
+    if (!formData.phoneNumber.trim() || !/^\d{10}$/.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = 'Valid 10-digit phone number is required';
+    }
+    if (!formData.flightDate) {
+      newErrors.flightDate = 'Flight date is required';
+    } else {
+      const selectedDate = new Date(formData.flightDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (selectedDate < today) {
+        newErrors.flightDate = 'Flight date cannot be in the past';
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const calculateFinalPrice = () => {
     if (!flight || !surgeData) return 0;

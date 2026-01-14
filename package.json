@@ -1,17 +1,26 @@
 {
-  "name": "xtechon",
-  "version": "0.1.0",
+  "name": "flight-booking-system",
+  "version": "1.0.0",
   "private": true,
+  "description": "Full-stack flight booking system with dynamic pricing - XTechon Assignment",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:setup": "node database/setup.js",
+    "db:validate": "node database/validate.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.3",
+    "jspdf": "^4.0.0",
     "next": "16.1.1",
+    "pg": "^8.16.3",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-icons": "^5.5.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

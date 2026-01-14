@@ -1,20 +1,105 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Header from '@/components/Header';
 import { FaDownload, FaTicketAlt, FaPlane, FaFilter, FaClock, FaCalendar, FaUser, FaPhone, FaTimes, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { generatePDF } from '@/lib/pdfGenerator';
+import { useApp } from '@/context/AppContext';
 
 export default function BookingsPage() {
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [cancellingBooking, setCancellingBooking] = useState(null);
+  const { fetchWalletBalance, user } = useApp();
 
   useEffect(() => {
     fetchBookings();
   }, [statusFilter]);
 
+  const fetchBookings = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/bookings?status=${statusFilter}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setBookings(data.bookings);
+      }
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const handleCancelBooking = async (bookingId) => {
+    if (!confirm('Are you sure you want to cancel this booking? A 10% cancellation fee will be charged.')) {
+      return;
+    }
 
+    setCancellingBooking(bookingId);
+    try {
+      const response = await fetch('/api/bookings/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId })
+      });
 
-  
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`Booking cancelled successfully! ₹${data.refundAmount.toFixed(2)} refunded to your wallet.`);
+        fetchBookings();
+        fetchWalletBalance(user.id);
+      } else {
+        alert(data.error || 'Failed to cancel booking');
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      alert('Failed to cancel booking');
+    } finally {
+      setCancellingBooking(null);
+    }
+  };
+
+  const handleDownloadTicket = (booking) => {
+    generatePDF({
+      passengerName: booking.passenger_name,
+      passengerAge: booking.passenger_age,
+      passengerGender: booking.passenger_gender,
+      passengerType: booking.passenger_type,
+      phoneNumber: booking.phone_number,
+      classType: booking.class_type,
+      airline: booking.airline,
+      flightId: booking.flight_id,
+      departure: booking.departure_city,
+      arrival: booking.arrival_city,
+      departureTime: booking.departure_time ? booking.departure_time.slice(0, 5) : null,
+      arrivalTime: booking.arrival_time ? booking.arrival_time.slice(0, 5) : null,
+      duration: booking.duration_minutes ? `${Math.floor(booking.duration_minutes / 60)}h ${booking.duration_minutes % 60}m` : null,
+      flightDate: booking.flight_date,
+      finalPrice: booking.final_price,
+      bookingDate: booking.booking_date,
+      pnr: booking.pnr,
+    });
+  };
+
+  const getStatusBadge = (status) => {
+    const badges = {
+      upcoming: { bg: 'bg-blue-100 dark:bg-blue-900', text: 'text-blue-800 dark:text-blue-200', icon: FaClock },
+      completed: { bg: 'bg-green-100 dark:bg-green-900', text: 'text-green-800 dark:text-green-200', icon: FaCheckCircle },
+      cancelled: { bg: 'bg-red-100 dark:bg-red-900', text: 'text-red-800 dark:text-red-200', icon: FaTimesCircle }
+    };
+    const badge = badges[status] || badges.upcoming;
+    const Icon = badge.icon;
+    return (
+      <span className={`${badge.bg} ${badge.text} px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1`}>
+        <Icon className="text-xs" />
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </span>
+    );
+  };
 
   if (loading) {
     return (
@@ -45,6 +130,7 @@ export default function BookingsPage() {
           
           {/* Status Filter */}
           <div className="flex items-center gap-3">
+            <FaFilter className="text-gray-600 dark:text-gray-400" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -182,7 +268,26 @@ export default function BookingsPage() {
                       </p>
                     </div>
 
-                  
+                    <div className="space-y-3">
+                      <button
+                        onClick={() => handleDownloadTicket(booking)}
+                        className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition shadow-lg hover:shadow-xl"
+                      >
+                        <FaDownload />
+                        Download Ticket
+                      </button>
+                      
+                      {booking.booking_status === 'upcoming' && (
+                        <button
+                          onClick={() => handleCancelBooking(booking.id)}
+                          disabled={cancellingBooking === booking.id}
+                          className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition disabled:opacity-50"
+                        >
+                          <FaTimes />
+                          {cancellingBooking === booking.id ? 'Cancelling...' : 'Cancel Booking'}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

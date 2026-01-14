@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-
+import { useApp } from '@/context/AppContext';
 import Link from 'next/link';
 import { FaEnvelope, FaLock, FaPlane } from 'react-icons/fa';
 
 export default function LoginPage() {
-  // const { login, loading: authLoading } = useApp();
+  const { login, loading: authLoading } = useApp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
