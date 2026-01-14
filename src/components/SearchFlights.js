@@ -6,7 +6,7 @@ import { FaSearch, FaPlane, FaSort, FaFilter } from 'react-icons/fa';
 export default function SearchFlights({ onSearch }) {
   const [departure, setDeparture] = useState('');
   const [arrival, setArrival] = useState('');
-  const [sortBy, setSortBy] = useState('price-high');
+  const [sortBy, setSortBy] = useState('price-low');
   const [airline, setAirline] = useState('');
 
   const handleSubmit = (e) => {

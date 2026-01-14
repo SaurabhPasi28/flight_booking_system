@@ -1,22 +1,23 @@
-import { Pool } from 'pg';
+import { Pool } from "pg";
 
 let pool;
 
+// console.log(process.env.DATABASE_URL,'----------->')
 export function getPool() {
   if (!pool) {
     pool = new Pool({
-      user: process.env.DB_USER || 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      database: process.env.DB_NAME || 'flight_booking',
-      password: process.env.DB_PASSWORD || 'root',
-      port: process.env.DB_PORT || 5432,
+      connectionString: process.env.DATABASE_URL,
+      
+      ssl: {
+        rejectUnauthorized: false,
+      },
     });
   }
+
   return pool;
 }
 
 export async function query(text, params) {
   const pool = getPool();
-  const result = await pool.query(text, params);
-  return result;
+  return await pool.query(text, params);
 }
