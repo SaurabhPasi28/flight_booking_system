@@ -6,8 +6,65 @@ import { FaPlane, FaClock, FaFire } from 'react-icons/fa';
 
 export default function FlightList({ flights, loading }) {
   const router = useRouter();
+  const [surgePrices, setSurgePrices] = useState({});
 
- 
+  useEffect(() => {
+    // Fetch surge pricing for all flights
+    if (flights && flights.length > 0) {
+      fetchSurgePrices();
+    }
+  }, [flights]);
+
+  const fetchSurgePrices = async () => {
+    const prices = {};
+    for (const flight of flights) {
+      try {
+        const response = await fetch(`/api/bookings/surge?flightId=${flight.flight_id}`);
+        const data = await response.json();
+        if (data.success) {
+          prices[flight.flight_id] = data;
+        }
+      } catch (error) {
+        console.error('Error fetching surge price:', error);
+      }
+    }
+    setSurgePrices(prices);
+  };
+
+  const formatTime = (timeString) => {
+    if (!timeString) return 'N/A';
+    return timeString.slice(0, 5); // HH:MM format
+  };
+
+  const formatDuration = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}m`;
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 dark:border-blue-400"></div>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">Loading flights...</p>
+      </div>
+    );
+  }
+
+  if (!flights || flights.length === 0) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-12 text-center transition-colors border border-gray-200 dark:border-gray-700">
+        <FaPlane className="text-6xl text-gray-400 mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          No flights found
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400">
+          Try adjusting your search criteria
+        </p>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="space-y-4">
@@ -89,7 +146,7 @@ export default function FlightList({ flights, loading }) {
                     </p>
                   </div>
                   <button
-                    onClick={() => router.push(``)}
+                    onClick={() => router.push(`/book?flightId=${flight.flight_id}`)}
                     className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-500 dark:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-700 text-white rounded-lg font-bold transition shadow-lg hover:shadow-xl"
                   >
                     Book Now
