@@ -1,15 +1,20 @@
 // Validate Database Connection and Setup
+require("dotenv").config({ path: ".env" });
 const { Pool } = require('pg');
 
 async function validateSetup() {
   console.log('🔍 Validating Flight Booking System Setup...\n');
 
+  if (!process.env.DATABASE_URL) {
+    console.error("❌ DATABASE_URL is not set in .env.local");
+    process.exit(1);
+  }
+
+  const isNeon = process.env.DATABASE_URL.includes("neon.tech");
+
   const pool = new Pool({
-    user: process.env.DB_USER || 'postgres',
-    host: process.env.DB_HOST || 'localhost',
-    database: process.env.DB_NAME || 'flight_booking',
-    password: process.env.DB_PASSWORD || 'postgres',
-    port: process.env.DB_PORT || 5432,
+    connectionString: process.env.DATABASE_URL,
+    ssl: isNeon ? { rejectUnauthorized: false } : false,
   });
 
   try {

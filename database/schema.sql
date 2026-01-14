@@ -3,6 +3,15 @@
 
 -- Connect to the database and create tables
 
+-- Users Table (for authentication)
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  full_name VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Flights Table
 CREATE TABLE IF NOT EXISTS flights (
   flight_id VARCHAR(10) PRIMARY KEY,
@@ -37,14 +46,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Users Table (for authentication)
-CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  full_name VARCHAR(100) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+
 
 -- Wallet Table (now per user)
 CREATE TABLE IF NOT EXISTS wallet (

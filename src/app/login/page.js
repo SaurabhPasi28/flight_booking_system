@@ -68,7 +68,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 outline-none transition"
-                  placeholder="you@example.com"
+                  placeholder="saurabh@gmail.com "
                 />
               </div>
             </div>
@@ -110,7 +110,7 @@ export default function LoginPage() {
 
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-              Demo Account: demo@flightbook.com / demo123
+              Demo Account: saurabh@gmail.com / 123456
             </p>
           </div>
         </div>
