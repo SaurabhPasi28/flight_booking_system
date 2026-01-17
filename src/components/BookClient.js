@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Header from '@/components/Header';
 import { useApp } from '@/context/AppContext';
 import { FaPlane, FaClock, FaCalendar, FaSuitcase, FaUser, FaPhone, FaIdCard, FaCheckCircle, FaExclamationTriangle, FaFire, FaMoneyBillWave } from 'react-icons/fa';
 import { generatePDF } from '@/lib/pdfGenerator';
@@ -226,7 +225,7 @@ export default function BookClient() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <Header />
+        
         <main className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 dark:border-blue-400"></div>
@@ -240,7 +239,7 @@ export default function BookClient() {
   if (!flight) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <Header />
+        
         <main className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Flight not found</h2>
@@ -259,7 +258,7 @@ export default function BookClient() {
   if (bookingSuccess) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <Header />
+        
         <main className="container mx-auto px-4 py-8 max-w-2xl">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 text-center">
             <FaCheckCircle className="text-7xl text-green-500 mx-auto mb-6" />
@@ -300,7 +299,7 @@ export default function BookClient() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
+      
       
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-8">

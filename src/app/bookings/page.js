@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Header from '@/components/Header';
 import { FaDownload, FaTicketAlt, FaPlane, FaFilter, FaClock, FaCalendar, FaUser, FaPhone, FaTimes, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { generatePDF } from '@/lib/pdfGenerator';
 import { useApp } from '@/context/AppContext';
@@ -104,7 +103,7 @@ export default function BookingsPage() {
   if (loading) {
     return (
       <div className="min-h-screen">
-        <Header />
+        
         <main className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 dark:border-blue-400"></div>
@@ -117,7 +116,7 @@ export default function BookingsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
+      
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">

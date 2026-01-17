@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Header from '@/components/Header';
 import SearchFlights from '@/components/SearchFlights';
 import FlightList from '@/components/FlightList';
 
@@ -40,7 +39,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      
       
       <main className="container mx-auto px-4 py-8">
         <SearchFlights onSearch={fetchFlights} />
